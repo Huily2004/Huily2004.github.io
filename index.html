@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda Online - Huilén</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: #fff0f5;
+            color: #333;
+        }
+
+        header {
+            background: #ffb6c1;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2em;
+            color: #fff;
+        }
+
+        main {
+            padding: 20px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        .form-container {
+            background: #ffe4ec;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        input[type="submit"] {
+            background: #ff69b4;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background: #ff1493;
+        }
+
+        .producto {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            background: #fff;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .producto img {
+            margin-right: 15px;
+            border-radius: 6px;
+        }
+
+        .precio-tabla {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+
+        .precio-tabla th, .precio-tabla td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .precio-tabla th {
+            background: #ffb6c1;
+            color: white;
+        }
+
+        a {
+            color: #d63384;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Bienvenidos a tu tienda online</h1>
+    </header>
+
+    <main>
+
+        <div class="form-container">
+            <h2>Iniciar sesión</h2>
+            <form action="login.php" method="POST">
+                <label for="usuario">Usuario:</label>
+                <input type="text" id="usuario" name="usuario" required>
+
+                <label for="pass">Contraseña:</label>
+                <input type="password" id="pass" name="pass" required>
+
+                <input type="submit" value="Ingresar">
+            </form>
+            <p>¿Eres nuevo? <a href="registro.html">Regístrate aquí</a></p>
+        </div>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Usuario - Tu Tienda Online</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #ffeef8, #f8bbd0);
+            color: #333;
+        }
+
+        .form-container {
+            max-width: 500px;
+            margin: 50px auto;
+            background: #fff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #d81b60;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: 600;
+            display: block;
+            margin-top: 15px;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: #ec407a;
+            outline: none;
+        }
+
+        input[type="submit"] {
+            margin-top: 25px;
+            background-color: #ec407a;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #d81b60;
+        }
+
+        p {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        a {
+            color: #d81b60;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background-color: #f8bbd0;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <h1>Regístrate en Tu Tienda Online</h1>
+        <hr>
+        <p>Completa el siguiente formulario para crear tu cuenta.</p>
+
+        <form action="registro.php" method="POST">
+            <label for="usuario">Nombre de Usuario:</label>
+            <input type="text" id="usuario" name="usuario" required>
+
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required>
+
+            <label for="apellido">Apellido:</label>
+            <input type="text" id="apellido" name="apellido" required>
+
+            <label for="dni">DNI:</label>
+            <input type="text" id="dni" name="dni" required>
+
+            <label for="mail">Email:</label>
+            <input type="email" id="mail" name="mail" required>
+
+            <label for="pass">Contraseña:</label>
+            <input type="password" id="pass" name="pass" required>
+
+            <label for="pass_confirm">Confirmar Contraseña:</label>
+            <input type="password" id="pass_confirm" name="pass_confirm" required>
+            <label>
+            <input type="checkbox" name="admin" value="1">
+            <label>Registrar como administrador</label>
+            <input type="submit" value="Registrarme">
+        </form>
+
+        <p>¿Ya tienes una cuenta? <a href="index.html">Inicia sesión aquí</a>.</p>
+    </div>
+
+</body>
+</html>
