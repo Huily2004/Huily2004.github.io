@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tienda Demo (HTML + JS) - Huilén</title>
+  <style>
+    :root{--pink:#ec407a;--dark:#333;--muted:#888}
+    *{box-sizing:border-box}
+    body{font-family:Inter, "Segoe UI", Roboto, Arial; margin:0; background:linear-gradient(135deg,#fff0f5,#ffeef8); color:var(--dark)}
+    header{background:linear-gradient(90deg,#ff9bb3,#ff6fa1); color:#fff; padding:18px 16px; text-align:center}
+    header h1{margin:0;font-size:1.3rem}
+    .wrap{max-width:1100px;margin:24px auto;padding:0 16px}
+    .card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 6px 20px rgba(0,0,0,0.06);}
+    .grid{display:grid;gap:16px}
+    .cols-2{grid-template-columns:1fr 360px}
+    form label{display:block;margin:8px 0 6px;font-weight:600;color:#555}
+    input[type=text],input[type=password],input[type=email],select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #e6e6e6}
+    button{background:var(--pink);color:#fff;border:0;padding:10px 14px;border-radius:8px;cursor:pointer}
+    button.ghost{background:transparent;color:var(--pink);border:1px solid var(--pink)}
+    .muted{color:var(--muted);font-size:.9rem}
+    .center{text-align:center}
+    .prod-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+    .producto{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:10px;border:1px solid #f0e6ec;background:#fff}
+    .producto img{width:100%;height:150px;object-fit:cover;border-radius:8px}
+    .producto .meta{display:flex;justify-content:space-between;align-items:center}
+    .small{font-size:.9rem}
+    .admin-panel{display:flex;flex-direction:column;gap:12px}
+    .row{display:flex;gap:8px}
+    .row > *{flex:1}
+    .danger{background:#ff6b6b}
+    .hidden{display:none}
+    .notice{padding:10px;border-radius:8px;background:#fff8f9;border:1px solid #ffe1ea;color:#8a2b44}
+    footer{margin:30px 0;text-align:center;color:var(--muted)}
+    .actions{display:flex;gap:8px}
+    .history-list{max-height:300px;overflow:auto}
+    .flex{display:flex;gap:8px;align-items:center}
+    input[type=file]{padding:6px}
+    .small-btn{padding:6px 8px;font-size:.9rem;border-radius:6px}
+    @media(max-width:880px){.cols-2{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Tienda Demo - HTML + JavaScript (solo cliente)</h1>
+  </header>
+
+  <div class="wrap">
+    <div class="grid cols-2" style="align-items:start">
+      <div class="card" id="left-pane">
+        <!-- Contenido dinámico (registro / login / productos) -->
+
+        <!-- INICIO: Registro -->
+        <div id="register-box">
+          <h2>Registro</h2>
+          <p class="muted">Crea una cuenta. Marca "administrador" solo si realmente quieres ser admin (demo).</p>
+          <form id="register-form">
+            <label for="r_user">Usuario</label>
+            <input id="r_user" type="text" required>
+
+            <label for="r_nombre">Nombre</label>
+            <input id="r_nombre" type="text" required>
+
+            <label for="r_apellido">Apellido</label>
+            <input id="r_apellido" type="text" required>
+
+            <label for="r_dni">DNI</label>
+            <input id="r_dni" type="text" required>
+
+            <label for="r_email">Email</label>
+            <input id="r_email" type="email" required>
+
+            <label for="r_pass">Contraseña</label>
+            <input id="r_pass" type="password" minlength="4" required>
+
+            <label for="r_pass2">Confirmar contraseña</label>
+            <input id="r_pass2" type="password" minlength="4" required>
+
+            <div class="flex">
+              <label class="center"><input id="r_admin" type="checkbox"> Registrar como administrador</label>
+              <button type="button" id="btn-register" style="margin-left:auto">Registrarme</button>
+            </div>
+          </form>
+          <p class="muted">¿Ya tenés cuenta? <a href="#" id="show-login">Iniciar sesión</a></p>
+        </div>
+        <!-- FIN: Registro -->
+
+        <!-- INICIO: Login -->
+        <div id="login-box" class="hidden">
+          <h2>Iniciar sesión</h2>
+          <form id="login-form">
+            <label for="l_user">Usuario o Email</label>
+            <input id="l_user" type="text" required>
+
+            <label for="l_pass">Contraseña</label>
+            <input id="l_pass" type="password" required>
+
+            <div class="row">
+              <button type="button" id="btn-login">Ingresar</button>
+              <button type="button" id="show-register" class="ghost">Registrarme</button>
+            </div>
+          </form>
+        </div>
+        <!-- FIN: Login -->
+
+        <!-- INICIO: Productos (vista usuario) -->
+        <div id="products-box" class="hidden">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h2>Productos</h2>
+            <div>
+              <span class="muted" id="welcome-user"></span>
+            </div>
+          </div>
+
+          <p class="muted">Compra productos, revisa tu historial en el panel derecho.</p>
+
+          <div class="prod-list" id="prod-list"></div>
+        </div>
+        <!-- FIN: Productos -->
+
+        <!-- Mensaje cuando no logeado -->
+        <div id="guest-box" class="hidden">
+          <div class="notice">Estás viendo la tienda como invitado. Inicia sesión o regístrate para comprar.</div>
+        </div>
+
+      </div>
+
+      <aside class="card">
+        <!-- Panel derecho: sesiones, historial y admin -->
+        <div id="session-panel">
+          <div id="not-logged">
+            <h3>Acceso</h3>
+            <p class="muted">Inicia sesión para acceder a funciones de compra o administración.</p>
+            <div style="display:flex;gap:8px;margin-top:12px">
+              <button id="open-login">Iniciar sesión</button>
+              <button id="open-register" class="ghost">Registrarme</button>
+            </div>
+          </div>
+
+          <div id="logged-as" class="hidden">
+            <h3>Cuenta</h3>
+            <p id="account-info" class="muted"></p>
+            <div style="display:flex;gap:8px;margin-top:12px">
+              <button id="btn-logout" class="ghost">Cerrar sesión</button>
+              <button id="btn-my-history" class="ghost">Mi historial</button>
+            </div>
+          </div>
+        </div>
+
+        <hr style="margin:14px 0;border:none;height:1px;background:#fde6ef">
+
+        <div id="history-panel" class="hidden">
+          <h3>Historial de Compras</h3>
+          <div class="history-list" id="history-list"></div>
+        </div>
+
+        <div id="admin-panel" class="hidden admin-panel">
+          <h3>Panel Admin</h3>
+          <p class="muted">Agregar / editar productos. Las imágenes se cargan desde tu PC y se guardan en localStorage (DataURL).</p>
+
+          <label>Agregar producto</label>
+          <input id="p_name" placeholder="Nombre">
+          <input id="p_price" placeholder="Precio" type="text">
+          <input id="p_stock" placeholder="Stock" type="number" min="0">
+          <input id="p_img" type="file" accept="image/*">
+          <div style="display:flex;gap:8px">
+            <button id="btn-add-prod">Agregar</button>
+            <button id="btn-refresh-prods" class="ghost">Restaurar demo</button>
+          </div>
+
+          <hr style="margin:12px 0;border:none;height:1px;background:#fde6ef">
+          <div id="admin-list"></div>
+        </div>
+
+      </aside>
+    </div>
+
+    <footer class="muted">Esta es una demo que usa <strong>localStorage</strong>. No uses estos datos en producción.</footer>
+  </div>
+
+  <script>
+    /* ------------------ Almacenamiento (localStorage) ------------------ */
+    const LS_USERS = 'demo_tienda_users_v1'
+    const LS_PRODS = 'demo_tienda_products_v1'
+    const LS_SESSION = 'demo_tienda_session_v1'
+    const LS_PURCHASES = 'demo_tienda_purchases_v1'
+
+    // Helpers
+    const $ = id => document.getElementById(id)
+
+    // Inicializar datos demo si no existen
+    function seedIfNeeded(){
+      if(!localStorage.getItem(LS_PRODS)){
+        const demo = [
+          {id: idGen(), name:'Paleta de sombras Rosa', price:1290, stock:10, img: sampleDataURL('https://picsum.photos/seed/1/400/300')},
+          {id: idGen(), name:'Labial Mate', price:890, stock:15, img: sampleDataURL('https://picsum.photos/seed/2/400/300')},
+          {id: idGen(), name:'Iluminador en polvo', price:1490, stock:5, img: sampleDataURL('https://picsum.photos/seed/3/400/300')}
+        ]
+        localStorage.setItem(LS_PRODS, JSON.stringify(demo))
+      }
+
+      if(!localStorage.getItem(LS_USERS)){
+        const users = [
+          // usuario demo admin: admin / pass: 1234
+          {id:idGen(), user:'admin', email:'admin@demo', pass:'1234', nombre:'Admin', apellido:'Demo', dni:'00000000', isAdmin:true}
+        ]
+        localStorage.setItem(LS_USERS, JSON.stringify(users))
+      }
+
+      if(!localStorage.getItem(LS_PURCHASES)){
+        localStorage.setItem(LS_PURCHASES, JSON.stringify([]))
+      }
+    }
+
+    function idGen(){return 'id_' + Math.random().toString(36).slice(2,9)}
+
+    // sampleDataURL: para demo no podemos llamar al exterior en github pages, pero podemos usar picsum via url as fallback.
+    // Sin embargo, si el navegador bloquea CORS al convertir a dataURL, manejamos el error y usamos un placeholder.
+    function sampleDataURL(src){
+      // guardamos la url tal cual y la imagen se mostrará usando esa url; al usar file uploads guardaremos dataURL.
+      return src
+    }
+
+    /* ------------------ Manejo de UI ------------------ */
+    const registerBox = $('register-box')
+    const loginBox = $('login-box')
+    const productsBox = $('products-box')
+    const guestBox = $('guest-box')
+    const prodList = $('prod-list')
+    const welcomeUser = $('welcome-user')
+    const notLogged = $('not-logged')
+    const loggedAs = $('logged-as')
+    const accountInfo = $('account-info')
+    const historyPanel = $('history-panel')
+    const historyList = $('history-list')
+    const adminPanel = $('admin-panel')
+    const adminList = $('admin-list')
+
+    // Mostrar/ocultar secciones según estado
+    function showSectionForState(){
+      const session = getSession()
+      if(session){
+        // logged
+        registerBox.classList.add('hidden')
+        loginBox.classList.add('hidden')
+        productsBox.classList.remove('hidden')
+        guestBox.classList.add('hidden')
+        notLogged.classList.add('hidden')
+        loggedAs.classList.remove('hidden')
+
+        welcomeUser.textContent = `Hola, ${session.nombre} ${session.apellido}`
+        accountInfo.textContent = `${session.user} — ${session.isAdmin? 'Administrador' : 'Usuario'}`
+
+        // admin panel
+        if(session.isAdmin){
+          adminPanel.classList.remove('hidden')
+        } else {
+          adminPanel.classList.add('hidden')
+        }
+
+        loadProducts()
+        loadHistoryForUser(session.id)
+        renderAdminList()
+      } else {
+        // no logged
+        registerBox.classList.remove('hidden')
+        loginBox.classList.add('hidden')
+        productsBox.classList.remove('hidden')
+        guestBox.classList.remove('hidden')
+        notLogged.classList.remove('hidden')
+        loggedAs.classList.add('hidden')
+        adminPanel.classList.add('hidden')
+
+        welcomeUser.textContent = 'Invitado'
+        loadProducts()
+        historyPanel.classList.add('hidden')
+      }
+    }
+
+    /* ------------------ Usuarios: registro, login, sesion ------------------ */
+    function getUsers(){return JSON.parse(localStorage.getItem(LS_USERS) || '[]')}
+    function setUsers(u){localStorage.setItem(LS_USERS, JSON.stringify(u))}
+
+    function registerUser(data){
+      const users = getUsers()
+      // no permitimos usuario o email repetido
+      if(users.find(x=>x.user === data.user)) throw 'El usuario ya existe'
+      if(users.find(x=>x.email === data.email)) throw 'El email ya registrado'
+      users.push(data)
+      setUsers(users)
+      return data
+    }
+
+    function findUserByLogin(login){
+      const users = getUsers()
+      return users.find(u=>u.user === login || u.email === login)
+    }
+
+    function saveSession(user){
+      localStorage.setItem(LS_SESSION, JSON.stringify(user))
+    }
+    function clearSession(){localStorage.removeItem(LS_SESSION)}
+    function getSession(){return JSON.parse(localStorage.getItem(LS_SESSION) || 'null')}
+
+    // eventos registro
+    $('btn-register').addEventListener('click', ()=>{
+      try{
+        const user = $('r_user').value.trim()
+        const nombre = $('r_nombre').value.trim()
+        const apellido = $('r_apellido').value.trim()
+        const dni = $('r_dni').value.trim()
+        const email = $('r_email').value.trim()
+        const pass = $('r_pass').value
+        const pass2 = $('r_pass2').value
+        const isAdmin = $('r_admin').checked
+        if(!user||!nombre||!apellido||!dni||!email||!pass) return alert('Completa todos los datos')
+        if(pass!==pass2) return alert('Las contraseñas no coinciden')
+
+        const newUser = {id:idGen(), user, nombre, apellido, dni, email, pass, isAdmin}
+        registerUser(newUser)
+        saveSession(newUser)
+        alert('Registro exitoso — ya estás logueado')
+        // limpiar form
+        $('register-form').reset()
+        showSectionForState()
+      }catch(e){alert(e)}
+    })
+
+    // mostrar login/registro
+    $('show-login').addEventListener('click', e=>{ e.preventDefault(); registerBox.classList.add('hidden'); loginBox.classList.remove('hidden') })
+    $('show-register').addEventListener('click', e=>{ registerBox.classList.remove('hidden'); loginBox.classList.add('hidden') })
+    $('open-login').addEventListener('click', ()=>{ registerBox.classList.add('hidden'); loginBox.classList.remove('hidden') })
+    $('open-register').addEventListener('click', ()=>{ registerBox.classList.remove('hidden'); loginBox.classList.add('hidden') })
+
+    // eventos login
+    $('btn-login').addEventListener('click', ()=>{
+      const login = $('l_user').value.trim()
+      const pass = $('l_pass').value
+      if(!login||!pass) return alert('Completa usuario y contraseña')
+      const user = findUserByLogin(login)
+      if(!user || user.pass !== pass) return alert('Usuario o contraseña incorrectos')
+      saveSession(user)
+      $('login-form').reset()
+      showSectionForState()
+    })
+
+    $('btn-logout').addEventListener('click', ()=>{
+      clearSession()
+      alert('Cerraste sesión')
+      showSectionForState()
+    })
+
+    /* ------------------ Productos: CRUD (admin) y Compra (usuario) ------------------ */
+    function getProducts(){return JSON.parse(localStorage.getItem(LS_PRODS) || '[]')}
+    function setProducts(p){localStorage.setItem(LS_PRODS, JSON.stringify(p))}
+
+    function loadProducts(){
+      const prods = getProducts()
+      prodList.innerHTML = ''
+      prods.forEach(p=>{
+        const box = document.createElement('div')
+        box.className='producto'
+        const img = document.createElement('img')
+        img.src = p.img || ''
+        img.alt = p.name
+        const name = document.createElement('div')
+        name.innerHTML = `<strong>${p.name}</strong>`
+        const meta = document.createElement('div')
+        meta.className='meta'
+        meta.innerHTML = `<div class="small muted">$${p.price.toFixed? p.price.toFixed(0): p.price}</div><div class="small">Stock: ${p.stock}</div>`
+
+        const actions = document.createElement('div')
+        actions.className='actions'
+        const btnBuy = document.createElement('button')
+        btnBuy.textContent = 'Comprar'
+        btnBuy.disabled = p.stock<=0
+        btnBuy.addEventListener('click', ()=> buyProduct(p.id))
+
+        actions.appendChild(btnBuy)
+
+        box.appendChild(img)
+        box.appendChild(name)
+        box.appendChild(meta)
+        box.appendChild(actions)
+        prodList.appendChild(box)
+      })
+    }
+
+    // comprar
+    function getPurchases(){return JSON.parse(localStorage.getItem(LS_PURCHASES) || '[]')}
+    function setPurchases(a){localStorage.setItem(LS_PURCHASES, JSON.stringify(a))}
+
+    function buyProduct(prodId){
+      const session = getSession()
+      if(!session){
+        if(!confirm('Debes iniciar sesión para comprar. Ir a iniciar sesión?')) return
+        registerBox.classList.add('hidden'); loginBox.classList.remove('hidden')
+        return
+      }
+      const prods = getProducts()
+      const p = prods.find(x=>x.id===prodId)
+      if(!p) return alert('Producto no encontrado')
+      if(p.stock<=0) return alert('Sin stock')
+      // decrementar stock
+      p.stock = Number(p.stock) - 1
+      setProducts(prods)
+      // guardar compra
+      const purchases = getPurchases()
+      purchases.push({id:idGen(), userId: session.id, prodId: p.id, name:p.name, price:p.price, date: new Date().toISOString()})
+      setPurchases(purchases)
+      alert('Compra realizada!')
+      loadProducts();
+      loadHistoryForUser(session.id)
+    }
+
+    /* ------------------ Historial ------------------ */
+    function loadHistoryForUser(userId){
+      const purchases = getPurchases().filter(x=>x.userId===userId)
+      historyList.innerHTML = ''
+      if(purchases.length===0){ historyList.innerHTML = '<p class="muted">No hay compras</p>'; historyPanel.classList.add('hidden'); return }
+      historyPanel.classList.remove('hidden')
+      purchases.slice().reverse().forEach(p=>{
+        const d = document.createElement('div')
+        d.className='card'
+        d.style.marginBottom='8px'
+        d.innerHTML = `<div style="display:flex;justify-content:space-between"><div><strong>${p.name}</strong><div class="muted small">$${p.price}</div></div><div class="muted small">${new Date(p.date).toLocaleString()}</div></div>`
+        historyList.appendChild(d)
+      })
+    }
+
+    $('btn-my-history').addEventListener('click', ()=>{
+      const s = getSession()
+      if(!s) return alert('No logueado')
+      loadHistoryForUser(s.id)
+    })
+
+    /* ------------------ Panel Admin: agregar/editar/eliminar ------------------ */
+    $('btn-add-prod').addEventListener('click', async ()=>{
+      const name = $('p_name').value.trim()
+      const price = Number($('p_price').value)
+      const stock = Number($('p_stock').value)
+      const file = $('p_img').files[0]
+      if(!name||!price||isNaN(price)) return alert('Nombre y precio válidos')
+      let imgData = ''
+      if(file){ imgData = await fileToDataURL(file) }
+      const prods = getProducts()
+      const newP = {id:idGen(), name, price, stock: isNaN(stock)?0:stock, img: imgData || sampleDataURL('https://picsum.photos/seed/' + Math.random() + '/400/300')}
+      prods.push(newP)
+      setProducts(prods)
+      $('p_name').value=''; $('p_price').value=''; $('p_stock').value=''; $('p_img').value=''
+      loadProducts(); renderAdminList();
+      alert('Producto agregado')
+    })
+
+    $('btn-refresh-prods').addEventListener('click', ()=>{
+      if(!confirm('Restaurar productos demo (se perderán los actuales)?')) return
+      localStorage.removeItem(LS_PRODS)
+      seedIfNeeded(); loadProducts(); renderAdminList();
+    })
+
+    function renderAdminList(){
+      const prods = getProducts()
+      adminList.innerHTML = ''
+      prods.forEach(p=>{
+        const d = document.createElement('div')
+        d.className = 'card'
+        d.style.marginBottom='8px'
+        d.innerHTML = `<div style="display:flex;gap:10px;align-items:center"><img src="${p.img||''}" style="width:60px;height:50px;object-fit:cover;border-radius:6px"><div style="flex:1"><strong>${p.name}</strong><div class="muted small">$${p.price} — stock: ${p.stock}</div></div></div>`
+
+        const editBtn = document.createElement('button')
+        editBtn.className='small-btn'
+        editBtn.textContent='Editar'
+        editBtn.addEventListener('click', ()=> openEditModal(p.id))
+
+        const delBtn = document.createElement('button')
+        delBtn.className='small-btn danger'
+        delBtn.textContent='Eliminar'
+        delBtn.style.color='#fff'
+        delBtn.addEventListener('click', ()=>{
+          if(!confirm('Eliminar producto?')) return
+          const res = getProducts().filter(x=>x.id!==p.id)
+          setProducts(res); loadProducts(); renderAdminList();
+        })
+
+        d.appendChild(editBtn); d.appendChild(delBtn)
+        adminList.appendChild(d)
+      })
+    }
+
+    // editar producto (modal simple usando prompt)
+    async function openEditModal(prodId){
+      const prods = getProducts()
+      const p = prods.find(x=>x.id===prodId)
+      if(!p) return alert('No encontrado')
+      const newName = prompt('Nombre', p.name) || p.name
+      const newPrice = Number(prompt('Precio', p.price) || p.price)
+      const newStock = Number(prompt('Stock', p.stock) || p.stock)
+      // preguntar si desea reemplazar imagen
+      if(confirm('¿Deseas reemplazar la imagen desde tu PC?')){
+        // crear input file temporal
+        const input = document.createElement('input')
+        input.type='file'; input.accept='image/*'
+        input.onchange = async ()=>{
+          const file = input.files[0]
+          if(file){
+            const data = await fileToDataURL(file)
+            p.img = data
+            p.name = newName; p.price = newPrice; p.stock = newStock
+            setProducts(prods); loadProducts(); renderAdminList(); alert('Producto editado')
+          }
+        }
+        input.click()
+      } else {
+        p.name = newName; p.price = newPrice; p.stock = newStock
+        setProducts(prods); loadProducts(); renderAdminList(); alert('Producto editado')
+      }
+    }
+
+    /* ------------------ Utilidades: file -> dataURL ------------------ */
+    function fileToDataURL(file){
+      return new Promise((res, rej)=>{
+        const fr = new FileReader()
+        fr.onload = ()=> res(fr.result)
+        fr.onerror = ()=> rej('Error leyendo imagen')
+        fr.readAsDataURL(file)
+      })
+    }
+
+    /* ------------------ Inicio: semilla y UI inicial ------------------ */
+    seedIfNeeded()
+    showSectionForState()
+
+    // Si el usuario está logeado al cargar, cargar historial
+    const s = getSession()
+    if(s) loadHistoryForUser(s.id)
+
+    // nota: en este demo las contraseñas se guardan en texto plano en localStorage. SOLO para demostración.
+  </script>
+</body>
+</html>
